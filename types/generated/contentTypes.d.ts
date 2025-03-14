@@ -369,6 +369,93 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
+  collectionName: 'articles';
+  info: {
+    description: '';
+    displayName: 'Article';
+    pluralName: 'articles';
+    singularName: 'article';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    author: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    categories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::category.category'
+    >;
+    content: Schema.Attribute.RichText &
+      Schema.Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'defaultHtml';
+        }
+      >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    image: Schema.Attribute.Media<'images' | 'files'>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::article.article'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    Title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
+  collectionName: 'categories';
+  info: {
+    description: '';
+    displayName: 'Category';
+    pluralName: 'categories';
+    singularName: 'category';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    articles: Schema.Attribute.Relation<'manyToMany', 'api::article.article'>;
+    child_categories: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Text;
+    Image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
+    parent: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
+    publishedAt: Schema.Attribute.DateTime;
+    Title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -878,6 +965,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::article.article': ApiArticleArticle;
+      'api::category.category': ApiCategoryCategory;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
